@@ -1,0 +1,121 @@
+.bg-logreg{
+	
+}
+
+.bg-user{
+	height: 3.75rem;
+	/* margin: auto; */
+	/* box-shadow: 0px 0px 0.8125rem #d0caca; */
+	/* border-bottom-right-radius: 0.3125rem; */
+	
+	border-bottom-left-radius: 0.3125rem;
+	position: absolute;
+	right: 0rem;
+	top: 0rem;
+	padding-left:0.9375rem ;
+	padding-right: 0.9375rem;
+	max-width: 15rem;
+	
+	animation-name: apperence,nav;
+	animation-duration: 2s;
+}
+.bg-user ul{
+	height:100%;
+}
+
+.bg-user li{
+	display: block;
+	text-align: center;
+	/* line-height: 100%; */
+	padding-left: 1.25rem;
+	padding-right: 1.25rem;
+	cursor: pointer;
+	color: #a8c8e0;
+	font-size: 1.25rem;
+	float: left;
+	/* margin-left: 1.25rem; */
+	height: 100%;
+	/* width:6rem; */
+	box-sizing: border-box;
+	/* font-weight: bold; */
+	max-width: 13rem;
+	overflow: hidden;
+	display: flex;
+	/* justify-content: center; */
+	vertical-align: middle;
+	align-items: center;
+}
+
+.bg-user li:hover{
+	box-shadow: 0px 0px 0.5rem;
+	color: #cacdca;
+}
+
+.bg-user-selected{
+	box-shadow: 0px 0px 0.5rem;
+	color: #b1b3b1;
+}
+
+
+.bg-user-selected{
+	box-shadow: 0px 0px 0.5rem;
+	color: #b1b3b1;
+}
+
+.bg-login{
+	display: none;
+	height:12rem;
+	width:15rem;
+	position: absolute;		
+	border-top-left-radius: 1rem;
+	border-bottom-left-radius: 1rem;
+	right: -10rem;
+	top: 5rem;
+}
+
+.bg-login-phone{}
+.bg-login-password{}
+.bg-login-submit{}
+.bg-register{
+	display: none;
+	height:12rem;
+	width:15rem;
+	position: absolute;		
+	border-top-left-radius: 1rem;
+	border-bottom-left-radius: 1rem;
+	right: -10rem;
+	top: 5rem;
+}
+.bg-register-phone{}
+.bg-register-password{}
+.bg-register-password{}
+.bg-register-submit{}
+
+.bg-login-submit{
+	
+}
+
+.usrinfo{
+	display: none;
+	width: 80%;
+	height: 50px;
+	border:1px;
+	margin: auto;
+}
+	
+.usrinfo-element{
+	width: 80%;
+	font-size: 5px;
+	height: 25px;
+	margin: auto;
+	text-align: center;
+	border: 1px solid;
+}
+
+	
+.usrinfo-element:hover{
+	box-shadow: 0px 0px 0.5rem;
+	color: #cacdca;
+}
+
+

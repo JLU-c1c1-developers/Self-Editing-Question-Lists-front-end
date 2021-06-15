@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>创建题单</title>
+    <link rel="stylesheet" href="./layui/css/layui.css">
+    <script type="text/javascript" src="./js/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="./js/logreg.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="./css/logreg.css">
+    <link rel="stylesheet" type="text/css" href="./css/profile.css">
+    <link rel="icon" href="./img/灯泡.svg">
+    <script src="./layui/layui.js"></script>
+</head>
+<body>
+    <style>
+        .text {
+            font-size: 16px;
+        }
+
+        .box-left {
+            height: 100%;
+            width: 23%;
+            display: inline-block;
+        }
+
+        .box-right {
+            position: absolute;
+            height: 65%;
+            width: 74%;
+            margin-left: 1%;
+            margin-top: -1%;
+            display: inline-block;
+        }
+
+        .modify-name {
+            display: inline-block;
+            height: 49%;
+            width: 99%;
+            margin-top: 9%;
+        }
+
+        .modify-title {
+            height: 49%;
+            width: 99%;
+        }
+
+        #content input {
+            display: inline-block !important;
+        }
+    </style>
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <ul class="layui-nav layui-layout-left" style="margin-left: -11%;">
+                <li class="layui-nav-item">
+                    <a href="./index.html" class="text">
+                        <p class="text" style="color: rgba(255,255,255,.7);">CleverHub v1.0</p>
+                    </a>
+                </li>
+                <li class="layui-nav-item"><a href="./搜索.html" class="text">题目搜索</a></li>
+                <li class="layui-nav-item"><a href="./创建题单.html" class="text" id="creat-list" style="display: none;">创建题单</a></li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;" class="text" style="display: none;" id='my-list'>我的题单</a>
+                    <dl class="layui-nav-child" id="temp"> </dl>
+                </li>
+            </ul>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item" id="user-infor" style="display: none;">
+                    <a href="javascript:;">
+                        <div class="text" id="username">用户名</div>
+                    </a>
+                    <dl class="layui-nav-child layui-anim layui-anim-downbit layui-anim-upbit-show layui-anim-upbit" style="left:0px;">
+                        <dd id="logout-display" style="color : black">
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <i class="layui-icon layui-icon-set" style="font-size: 17px;"></i> 登出
+                        </dd>
+
+                        <dd onclick="document.getElementById('profile').style.display='block';" style="color : black">
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <i class="layui-icon layui-icon-user" style="font-size: 17px;"></i> Profile
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item " id="login-display" onclick="logindisplay()" style="display: none; margin-left: -33%;">
+                    登录
+                </li>
+                <li class="layui-nav-item " id="register-display" onclick="regdisplay()" style="display: none; margin-left: 32%;">
+                    注册
+                </li>
+            </ul>
+        </div>
+
+
+        <div id="profile" class="modal">
+            <span onclick="document.getElementById('profile').style.display='none'" class="close" title="Close Modal">&times;</span>
+            <div class="modal-content animate" action="">
+                <div class="container">
+                    <label><b>Account</b></label>
+                    <input type="textt" id="profile-account" placeholder=tmpaccount disabled>
+
+                    <label><b>Password</b></label>
+                    <input type="password" placeholder="change Password" id="changepassword">
+
+                    <label><b>Repeat Password</b></label>
+                    <input type="password" placeholder="Repeat Password" id="repeatpassword">
+
+                    <label><b>NickName</b></label>
+                    <input type="textt" value="nickname" id="profile-nickname">
+                </div>
+
+                <div class="clearfix">
+                    <button type="button" onclick="document.getElementById('profile').style.display='none'" class="profile-btn" style="margin-left: 11%; background-color: #FF5722">取消更改</button>
+                    <button class="profile-btn" id="profilesubmitbutton" style="margin-left: 25%;">确认更改</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-login" style="position: absolute;top: 61px;right: 20px;z-index: 9999;position: fixed;right: 0px;">
+            <div class="bg-login-phone">
+                <input type="textt" placeholder="账号" id="loginaccount">
+            </div>
+            <div class="bg-login-password">
+                <input type="password" placeholder="密码" id="loginpassword">
+            </div>
+            <div class="bg-login-submit">
+                <button style="height:40px;width: 100%;padding: 0.75rem 20px;margin: 0.5rem 0;display: inline-block;border: 1px solid #f6e0e0;box-sizing: border-box;border-radius: 20px;background-color: #40bf40;" id="login">登陆</button>
+            </div>
+        </div>
+
+        <div class="bg-register" id="bg-register" style="position: absolute;top: 61px; z-index: 9999;position: fixed;right: 0px;">
+            <div class="bg-register-phone" name="regaccount">
+                <input type="textt" placeholder="电话" id="phone" required="required">
+            </div>
+            <div class="bg-register-password">
+                <input type="textt" placeholder="昵称" id="nickname" required="required">
+            </div>
+            <div class="bg-register-password">
+                <input type="password" placeholder="密码" id="password" required="required">
+            </div>
+            <div class="bg-register-submit">
+                <button style="height:40px;width: 100%;padding: 0.75rem 20px;margin: 0.5rem 0;display: inline-block;border: 1px solid #f6e0e0;box-sizing: border-box;border-radius: 20px;background-color: #40bf40;" id="register">注册</button>
+            </div>
+        </div>
+
+        <div class="layui-body" style=" margin-left: -11%; top: 93px; width: 97%;">
+            <div class="layui-row">
+                <div class="layui-col-space5">
+                    <div class="layui-col-md6">
+                        <div class="layui-row" style="margin-right: -11%;">
+                            <div class="layui-col-md12">
+                                <div class="layui-panel" style="padding: 20px 30px; height: 150px; background: url(./img/2.png) no-repeat 31% 15%;">
+                                    <div class="modify-name" style=" margin-top: 1%">
+                                        <div class="text" style=" cursor: pointer; font-size: 35px; font-weight: 50;" id="list-name" ondblclick="ShowElement1(this)">默认名称</div>
+                                    </div>
+                                    <button type="button" class="layui-btn layui-btn-normal" style="margin-left: 87%;margin-top: -4%; background-color: #01AAED; display: inline-block;" id="creat-listbtn">生成题单</button>
+                                    <div style="font-size: 17px;display:inline-block;margin-top: -3%;">
+                                        题单简介:
+                                        <div class="text" id="list-summary" ondblclick="ShowElement2(this)" style="cursor: pointer;">默认简介,双击区域修改相应内容~</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-row" style="margin-right: -11%;">
+                            <div class="layui-col-md12">
+                                <div class="layui-panel" style="padding: 20px 30px; height: 359px ;margin-top:1.25%;
+                            background: url(./img/2.png) no-repeat 32% 34.7%;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-col-md6">
+                        <div class="layui-panel" style="padding: 20px 30px; height: 560px; overflow: auto;
+                    background: url(./img/2.png) no-repeat 70% 21%;">
+                            <div id="questionlist"> </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="./js/jquery-3.5.1.js"></script>
+        <script src="./layui/layui.js"></script>
+        <script>
+            layui.use('element', function () {
+                var element = layui.element;
+            });
+        </script>
+        <script type="text/javascript">
+            window.onload = function () {
+                $('#profile-account').val(sessionStorage.getItem('account'));
+            }
+            function ShowElement1(element) {
+                var oldhtml = element.innerText;
+                var newobj = document.createElement('input');
+                newobj.className = 'layui-input'
+                newobj.type = 'text';
+                newobj.value = oldhtml;
+                newobj.style = 'width:80%; margin-left:0.5%; margin-top:1%';
+                newobj.onblur = function ()  //为新增元素添加光标离开事件
+                {
+                    //当触发时判断新增元素值是否为空，为空则不修改，并返回原有值
+                    element.innerHTML = this.value == oldhtml ? oldhtml : this.value;
+                    //当触发时设置父节点的双击事件为ShowElement、也可在这里进行保存动作
+                    element.setAttribute("ondblclick", "ShowElement1(this);");
+                }
+                element.innerHTML = '';
+                element.appendChild(newobj);
+                newobj.setSelectionRange(0, oldhtml.length);
+                newobj.focus();
+                newobj.parentNode.setAttribute("ondblclick", "");
+            }
+            function ShowElement2(element) {
+                var oldhtml = element.innerText;
+                var newobj = document.createElement('textarea');
+                newobj.className = 'layui-textarea'
+                newobj.type = 'text';
+                newobj.value = oldhtml;
+                newobj.style = 'width:690px; min-height:30px; margin-top:3px';
+                newobj.onblur = function ()  //为新增元素添加光标离开事件
+                {
+                    //当触发时判断新增元素值是否为空，为空则不修改，并返回原有值
+                    element.innerHTML = this.value == oldhtml ? oldhtml : this.value;
+                    //当触发时设置父节点的双击事件为ShowElement、也可在这里进行保存动作
+                    element.setAttribute("ondblclick", "ShowElement2(this);");
+                }
+                element.innerHTML = '';
+                element.appendChild(newobj);
+                newobj.setSelectionRange(0, oldhtml.length);
+                newobj.focus();
+                newobj.parentNode.setAttribute("ondblclick", "");
+            }
+            $('#creat-listbtn').click(function () {
+                var name = document.getElementById("list-name").innerText;
+                var summary = document.getElementById("list-summary").innerText;
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/bill/add',
+                    type: 'POST',
+                    data: {
+                        name: name,
+                        description: summary
+                    },
+                    async: false,
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            $.ajax({
+                                url: 'http://60.205.211.19:1024/bill/getList',
+                                type: 'GET',
+                                xhrFields: {
+                                    withCredentials: true
+                                },
+                                headers: {
+                                    Authorization: sessionStorage.getItem('token')
+                                },
+                                success: function (res) {
+                                    if (res.code == 200) {
+                                        var tmp = document.getElementById("temp");
+                                        var len = res.data.length;
+                                        var nmp = res.data[len - 1];
+                                        window.location.href = "./题单管理.html?id=" + nmp.id;
+                                    }
+                                    else alert(res.message)
+                                }
+                            })
+                        }
+                        else alert('submit fail:' + res.message);
+                    }
+                })
+            });
+
+            getstatus();
+            function getstatus() {
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/user/loginInfo',
+                    type: 'GET',
+                    data: {
+                    },
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            //alert('submit successfully')
+                        }
+                        else {
+                            alert("用户未登录")
+                            window.location.href = "./index.html";
+                        }
+                    }
+                });
+            }
+        </script>
+        <script type="text/javascript" src="./js/导航栏.js"></script>
+
+</body>
+</html>

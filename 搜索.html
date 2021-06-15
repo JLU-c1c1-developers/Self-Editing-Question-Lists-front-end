@@ -1,0 +1,337 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="./css/logreg.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="./js/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="./js/logreg.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/profile.css" />
+    <link rel="stylesheet" href="./layui/css/layui.css">
+    <link rel="icon" href="./img/灯泡.svg">
+    <script src="./layui/layui.js"></script>
+</head>
+<style>
+    * {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    .box {
+        background-size: cover;
+        max-width: 1920px;
+        margin: 0 auto;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: url(./img/bg.jpg) no-repeat center;
+        background-size: cover;
+    }
+
+    .top {
+        width: 60%;
+        margin: 0 auto;
+        height: 100%;
+        text-align: left;
+    }
+
+    .search {
+        text-align: center;
+        height: auto;
+        padding-top: 200px;
+        background-color: transparent;
+        position: relative;
+    }
+
+        .search input {
+            height: 40px;
+        }
+
+        .search h2 {
+            margin-bottom: 10px;
+            font-weight: 500;
+            font-size: 30px;
+            letter-spacing: 2px;
+            font-family: 等线;
+            color: rgba(0, 0, 0, 0.8)
+        }
+
+            .search h2 span {
+                font-weight: 500;
+                color: rgba(255, 87, 34, 0.54);
+            }
+
+    .icon {
+        position: absolute;
+        display: inline-block;
+        width: 23px;
+        height: 23px;
+        left: 1.3%;
+        top: 89%;
+        cursor: pointer;
+    }
+
+    .input {
+        transition: all 0.2s;
+        border: 2px solid #034;
+        border-radius: 20px;
+        width: 100%;
+        height: 100%;
+        margin: 0px;
+        padding: 0px 40px;
+        display: inline-block;
+        font: 15px sans-serif;
+        box-sizing: border-box;
+    }
+
+    .input:focus {
+            box-shadow: 0px 0px 7px #F40;
+            background-color: #ffffff;
+            border: 0px;
+            outline: none;
+    }
+
+    .input_box {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .answer {
+        border: 2px solid;
+        margin-top: 20px;
+        width: 100%;
+        min-height: 200px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-sizing: border-box;
+        padding: 6px 4px;
+        max-height: 300px;
+        overflow: auto;
+        overflow-x: hidden;
+        display: none;
+    }
+
+    .answer .item {
+            text-align: left;
+    }
+
+    .layui-header {
+        background-color: #FAFAFAa0 !important;
+    }
+
+    .text {
+        font-size: 16px;
+        color: #2F4056 !important;
+    }
+
+    .layui-nav .layui-nav-more {
+        border-top-color: #2F4056;
+    }
+
+    .layui-nav {
+        color: #333 !important;
+    }
+
+        .layui-nav .layui-nav-mored, .layui-nav-itemed > a .layui-nav-more {
+            margin-top: -9px;
+            border-style: dashed dashed solid;
+            border-color: transparent transparent #e05f5f;
+        }
+</style>
+
+<body>
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <ul class="layui-nav layui-layout-left" style="margin-left: -11%;">
+
+                <li class="layui-nav-item"><a href="./index.html" class="text"><p class="text">CleverHub v1.0</p></a></li>
+                <li class="layui-nav-item"><a href="./搜索.html" class="text">题目搜索</a></li>
+                <li class="layui-nav-item"><a href="./创建题单.html" class="text" id="creat-list" style="display: none;">创建题单</a></li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;" class="text" onclick="add()" style="display: none;" id="my-list">我的题单</a>
+                    <dl class="layui-nav-child" id="temp"></dl>
+                </li>
+            </ul>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item" id="user-infor" style="display: none;">
+                    <a href="javascript:;">
+                        <div class="text" id="username">用户名</div>
+                    </a>
+                    <dl class="layui-nav-child layui-anim layui-anim-downbit layui-anim-upbit-show layui-anim-upbit" style="left:0px;">
+                        <dd id="logout-display" style="color : black">
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <i class="layui-icon layui-icon-set" style="font-size: 17px;"></i> 登出
+                        </dd>
+
+                        <dd onclick="document.getElementById('profile').style.display='block';" style="color : black">
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <i class="layui-icon layui-icon-user" style="font-size: 17px;"></i> Profile
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item " id="login-display" onclick="logindisplay()" style="display: none; margin-left: -33%;">
+                    登录
+                </li>
+                <li class="layui-nav-item " id="register-display" onclick="regdisplay()" style="display: none; margin-left: 32%">
+                    注册
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="top">
+            <div class="search">
+                <h2 id="title"> Welcome To <span>题目搜索</span> </h2>
+                <div class="input-box">
+                    <input class="input"
+                           type="text" id="input"
+                           placeholder="请输入您要搜索的内容">
+                    <img class="icon" src="./img/搜索.svg"></img>
+                </div>
+            </div>
+            <div class="answer" id="answer"> </div>
+        </div>
+    </div>
+
+
+    <div id="profile" class="modal">
+        <span onclick="document.getElementById('profile').style.display='none'" class="close" title="Close Modal">&times;</span>
+        <div class="modal-content animate" action="">
+            <div class="container">
+                <label><b>Account</b></label>
+                <input type="textt" id="profile-account" placeholder=tmpaccount disabled>
+
+                <label><b>Password</b></label>
+                <input type="password" placeholder="change Password" id="changepassword">
+
+                <label><b>Repeat Password</b></label>
+                <input type="password" placeholder="Repeat Password" id="repeatpassword">
+
+                <label><b>NickName</b></label>
+                <input type="textt" value="nickname" id="profile-nickname">
+            </div>
+
+            <div class="clearfix">
+                <button type="button" onclick="document.getElementById('profile').style.display='none'" class="profile-btn" style="margin-left: 11%; background-color: #FF5722">取消更改</button>
+                <button class="profile-btn" id="profilesubmitbutton" style="margin-left: 25%;">确认更改</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-login" style="position: absolute;top: 61px;right: 20px;">
+        <div class="bg-login-phone">
+            <input type="textt" placeholder="账号" id="loginaccount">
+        </div>
+        <div class="bg-login-password">
+            <input type="password" placeholder="密码" id="loginpassword">
+        </div>
+        <div class="bg-login-submit">
+            <button style="height:40px;width: 100%;padding: 0.75rem 20px;margin: 0.5rem 0;display: inline-block;border: 1px solid #f6e0e0;box-sizing: border-box;border-radius: 20px;background-color: #5FB878;" id="login">登陆</button>
+        </div>
+    </div>
+    <!-- 登陆-->
+    <div class="bg-register" id="bg-register" style="position: absolute;top: 61px;right: 20px;">
+        <div class="bg-register-phone" name="regaccount">
+            <input type="textt" placeholder="电话" id="phone" required="required">
+        </div>
+        <div class="bg-register-password">
+            <input type="textt" placeholder="昵称" id="nickname" required="required">
+        </div>
+        <div class="bg-register-password">
+            <input type="password" placeholder="密码" id="password" required="required">
+        </div>
+        <div class="bg-register-submit">
+            <div class="bg-register-submit">
+                <button style="height:40px;width: 100%;padding: 0.75rem 20px;margin: 0.5rem 0;display: inline-block;border: 1px solid #f6e0e0;box-sizing: border-box;border-radius: 20px;background-color: #5FB878;" id="register">注册</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+    window.onload = function(){
+        // alert(123)
+        $('#profile-account').val(sessionStorage.getItem('account'));
+    }
+
+    $(".input").keydown(function (event){
+        if(event.keyCode == 13)
+            queryAnswer();
+    })
+    function queryAnswer()
+    {
+        document.getElementById('answer').innerText = ""
+        $('.answer').slideDown();
+        $.ajax({
+            url:'http://60.205.211.19:1024/subject/search',
+            type:'GET',
+            data:{
+                title:$('#input').val()
+            }
+            , success:function(result){
+
+                if(result.data.length == 0)
+                {
+                    document.getElementById('title').innerText = "查找失败~"
+                    document.getElementById('answer').innerText = "未收录符合要求的题目"
+                }
+                else
+                {
+                    document.getElementById('title').innerText = "查找成功！"
+
+                    for(var i = 0; i < result.data.length; i++)
+                    {
+                        var ss = "";
+                        if(result.data[i].type == 1) ss += "单选题: "
+                        if(result.data[i].type == 2) ss += "多选题: "
+                        if(result.data[i].type == 3) ss += "填空题: "
+                        if(result.data[i].type == 4) ss += "判断题: "
+
+                        ss += result.data[i].title + "\n";
+                        if(result.data[i].type == 1)
+                        {
+                            ss += result.data[i].answers[0].option + " : " + result.data[i].answers[0].answer + "\n";
+                        }
+                        if(result.data[i].type == 2)
+                        {
+                             for(var j = 0;j < result.data[i].answers.length; j++)
+                                 ss += result.data[i].answers[j].option + ":" + result.data[i].answers[j].answer + "\n";
+                        }
+                        if(result.data[i].type == 3)
+                        {
+                            for(var j = 0;j < result.data[i].answers.length; j++)
+                                ss += result.data[i].answers[j].option + " : " + result.data[i].answers[j].answer + "\n";
+                        }
+                        if(result.data[i].type == 4)
+                        {
+                            ss += result.data[i].answers[0].answer;
+                        }
+                        if(i!=0) document.getElementById('answer').innerText += "\n" ;
+                        document.getElementById('answer').innerText += ss;
+                    }
+                }
+            }
+            , error:function(event, xhr, options){
+                alert("An error occurred!");
+            }
+        })
+
+    }
+
+    $(".input").keydown(function (event){
+        if(event.keyCode == 8)
+            recover();
+    })
+
+    function recover()
+    {
+        document.getElementById('title').innerHTML = "<h2 id = 'title'> Welcome To <span>题目搜索</span> </h2>"
+        $('.answer').fadeOut();
+    }
+    </script>
+
+    <script type="text/javascript" src="./js/导航栏.js"></script>
+</body>
+</html>

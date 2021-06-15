@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>题单管理</title>
+    <link rel="stylesheet" href="./layui/css/layui.css">
+    <script type="text/javascript" src="./js/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="./js/logreg.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="./css/logreg.css">
+    <link rel="stylesheet" type="text/css" href="./css/profile.css">
+    <link rel="stylesheet" type="text/css" href="./css/preview.css">
+    <link rel="icon" href="./img/灯泡.svg">
+    <script src="./layui/layui.js"></script>
+</head>
+<body>
+    <style>
+        .text {
+            font-size: 16px;
+        }
+
+        .box-left {
+            height: 100%;
+            width: 23%;
+            display: inline-block;
+        }
+
+        .box-right {
+            position: absolute;
+            height: 65%;
+            width: 74%;
+            margin-left: 1%;
+            margin-top: -1%;
+            display: inline-block;
+        }
+
+        .modify-name {
+            display: inline-block;
+            height: 49%;
+            width: 99%;
+            margin-top: 9%;
+        }
+
+        .modify-title {
+            height: 49%;
+            width: 99%;
+        }
+
+        span.questionhint {
+            font-size: 12px;
+        }
+
+        span.answerhint {
+            font-size: 14px;
+        }
+
+        span.answerself {
+        }
+
+        #content input {
+            display: inline-block !important;
+            height: 32px;
+        }
+
+            #content input[type=text] {
+                background: rgb(255 255 255 / 26%);
+                box-shadow: 0rem 0rem 0.4rem #b3b3b3;
+            }
+    </style>
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <ul class="layui-nav layui-layout-left" style="margin-left: -11%;">
+                <li class="layui-nav-item">
+                    <a href="./index.html" class="text">
+                        <p class="text" style="color: rgba(255,255,255,.7);">CleverHub v1.0</p>
+                    </a>
+                </li>
+                <li class="layui-nav-item"><a href="./搜索.html" class="text">题目搜索</a></li>
+                <li class="layui-nav-item"><a href="./创建题单.html" class="text" id="creat-list" style="display: none;">创建题单</a></li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;" class="text" style="display: none;" id='my-list'>我的题单</a>
+                    <dl class="layui-nav-child" id="temp"> </dl>
+                </li>
+            </ul>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item" id="user-infor" style="display: none;">
+                    <a href="javascript:;">
+                        <div class="text" id="username">用户名</div>
+                    </a>
+
+                    <dl class="layui-nav-child layui-anim layui-anim-downbit layui-anim-upbit-show layui-anim-upbit" style="left:0px;">
+                        <dd id="logout-display" style="color : black;cursor: pointer;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <i class="layui-icon layui-icon-set" style="font-size: 17px; cursor: pointer;"></i> 登出
+                        </dd>
+
+                        <dd onclick="document.getElementById('profile').style.display='block';" style="color : black;cursor: pointer;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <i class="layui-icon layui-icon-user" style="font-size: 17px; cursor: pointer;"></i> Profile
+                        </dd>
+                    </dl>
+
+                </li>
+                <li class="layui-nav-item " id="login-display" onclick="logindisplay()" style="cursor: pointer; display: none; margin-left: -33%;">
+                    登录
+                </li>
+                <li class="layui-nav-item " id="register-display" onclick="regdisplay()" style="cursor: pointer; display: none; margin-left: 32%;">
+                    注册
+                </li>
+            </ul>
+        </div>
+
+
+        <div id="profile" class="modal">
+            <span onclick="document.getElementById('profile').style.display='none'" class="close" title="Close Modal">&times;</span>
+            <div class="modal-content animate" action="">
+                <div class="container">
+                    <label><b>Account</b></label>
+                    <input type="textt" id="profile-account" placeholder=tmpaccount disabled>
+
+                    <label><b>Password</b></label>
+                    <input type="password" placeholder="change Password" id="changepassword">
+
+                    <label><b>Repeat Password</b></label>
+                    <input type="password" placeholder="Repeat Password" id="repeatpassword">
+
+                    <label><b>NickName</b></label>
+                    <input type="textt" value="nickname" id="profile-nickname">
+                </div>
+
+                <div class="clearfix">
+                    <button type="button" onclick="document.getElementById('profile').style.display='none'" class="profile-btn" style="margin-left: 11%; background-color: #FF5722">取消更改</button>
+                    <button class="profile-btn" id="profilesubmitbutton" style="margin-left: 25%;">确认更改</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-login" style="position: absolute;top: 61px;right: 20px;z-index: 9999;position: fixed;right: 0px;">
+            <div class="bg-login-phone">
+                <input type="textt" placeholder="账号" id="loginaccount">
+            </div>
+            <div class="bg-login-password">
+                <input type="password" placeholder="密码" id="loginpassword">
+            </div>
+            <div class="bg-login-submit">
+                <button style="height:40px;width: 100%;padding: 0.75rem 20px;margin: 0.5rem 0;display: inline-block;border: 1px solid #f6e0e0;box-sizing: border-box;border-radius: 20px;background-color: #40bf40; cursor: pointer;" id="login">登陆</button>
+            </div>
+        </div>
+
+        <div class="bg-register" id="bg-register" style="position: absolute;top: 61px; z-index: 9999;position: fixed;right: 0px;">
+            <div class="bg-register-phone" name="regaccount">
+                <input type="textt" placeholder="电话" id="phone" required="required">
+            </div>
+            <div class="bg-register-password">
+                <input type="textt" placeholder="昵称" id="nickname" required="required">
+            </div>
+            <div class="bg-register-password">
+                <input type="password" placeholder="密码" id="password" required="required">
+            </div>
+            <div class="bg-register-submit">
+                <button style="height:40px;width: 100%;padding: 0.75rem 20px;margin: 0.5rem 0;display: inline-block;border: 1px solid #f6e0e0;box-sizing: border-box;border-radius: 20px;background-color: #40bf40;" id="register">注册</button>
+            </div>
+        </div>
+
+
+
+        <div class="layui-body" style=" margin-left: -11%; top: 93px; width: 97%;">
+            <div class="layui-row">
+                <div class="layui-col-space5">
+
+                    <div class="layui-col-md6">
+                        <div class="layui-row" style="margin-right: -11%;">
+                            <div class="layui-col-md12">
+                                <div class="layui-panel" style="padding: 8px 30px; height: 150px; background: url(./img/2.png) no-repeat 31% 15%;">
+                                    <div class="modify-name" style=" margin-top: 1%">
+                                        <div class="text" style=" cursor: pointer; font-size: 35px; font-weight: 50;" id="list-name" ondblclick="ShowElement1(this)">&nbsp&nbsp&nbsp</div>
+                                    </div>
+
+                                    <button type="button" class="layui-btn layui-btn-normal" style="margin-left: 87%;margin-top: -4%; background-color: red; display: inline-block;" id="delete-list">删除题单</button>
+                                    <button type="button" class="layui-btn layui-btn-normal" style="margin-left: 87%;margin-top: -24%; " id="save-list">保存修改</button>
+
+                                    <div style="font-size: 17px;display:inline-block;margin-top: -4%;">
+                                        题单简介:
+                                        <div class="text" id="list-summary" ondblclick="ShowElement2(this)" style="cursor: pointer;">&nbsp&nbsp&nbsp</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p id="delete-problem" style="display: none;">jjjjj</p>
+                        <div class="layui-row" style="margin-right: -11%;">
+                            <div class="layui-col-md12">
+                                <div class="layui-panel" style="padding: 20px 30px; height: 359px ;margin-top:1.25%;height: 383px; background: url(./img/2.png) no-repeat 32% 34.7%;">
+                                    <form class="layui-form" id="content">
+                                        <select id="addsubject" lay-filter="addsubject">
+                                            <option value='0'>请选择要添加的题目类型</option>
+                                            <option value="1">单选题</option>
+                                            <option value="2">多选题</option>
+                                            <option value="3">填空题</option>
+                                            <option value="4">判断题</option>
+                                        </select>
+
+                                        <div id="danxuan" style="display: none;">
+                                            <label>题目</label>
+                                            <input placeholder="题面" id="danxuan-quetiontitle" type="text" class="layui-input"></input>
+
+                                            <label>选项数目</label>
+                                            <div>
+                                                <select id="optionnum" lay-filter="optionnum">
+                                                    <option value="0">--</option>
+                                                    <option value="1">1</a>
+                                                    <option value="2">2</a>
+                                                    <option value="3">3</a>
+                                                    <option value="4">4</a>
+                                                    <option value="5">5</a>
+                                                </select>
+                                            </div>
+
+                                            <div id="fulloption">
+                                                <div id="optioncontent">
+                                                </div>
+                                            </div>
+
+                                            <botton id="submitdanxuan" class="normal-btn normal-btn20" style="margin-top: 1.5%;" name="add_button_display">提交</botton>
+                                            <botton id="submitdanxuan" class="normal-btn normal-btn2 normal-btn21" style="background-color:#FF5722;margin-top: 1.5%;" name="modify_button_display" onclick="document.getElementById('delete-problem').click()">删除</botton>
+                                            <botton id="modify_submitdanxuan" class="normal-btn normal-btn2 normal-btn22" style="background-color:#FFB800;margin-top: 1.5%;" name="modify_button_display">修改</botton>
+                                            <botton id="submitdanxuan" class="normal-btn normal-btn2 normal-btn23" style="margin-top: 1.5%;" name="modify_button_display" onclick="display_add_button();location.reload();">返回</botton>
+                                        </div>
+
+                                        <div id="tiankong" style="display: none;">
+                                            <label>题目</label>
+                                            <div><input placeholder="题面" id="tiankong-quetiontitle" type="text" value="" class="layui-input"></input></div>
+                                            <label>填空数目</label>
+                                            <div>
+                                                <select id="tiankong-optionnum" lay-filter="tiankong-optionnum">
+                                                    <option value="0">--</option>
+                                                    <option value="1">1</a>
+                                                    <option value="2">2</a>
+                                                    <option value="3">3</a>
+                                                    <option value="4">4</a>
+                                                    <option value="5">5</a>
+                                                </select>
+                                            </div>
+
+                                            <div id="tiankong-fulloption">
+                                                <div id="tiankong-optioncontent">
+                                                </div>
+                                            </div>
+                                            <div id="submittiankong" class="normal-btn normal-btn20" style="margin-top: 1.5%;" name="add_button_display">提交</div>
+                                            <botton id="submittiankong" class="normal-btn normal-btn2 normal-btn21" style="background-color:#FF5722;margin-top: 1.5%;" name="modify_button_display" onclick="document.getElementById('delete-problem').click()">删除</botton>
+                                            <div id="modify_submittiankong" class="normal-btn normal-btn2 normal-btn22" style="background-color:#FFB800;margin-top: 1.5%;" name="modify_button_display">修改</div>
+                                            <div id="submittiankong" class="normal-btn normal-btn2 normal-btn23" style="margin-top: 1.5%;" name="modify_button_display" onclick="display_add_button();location.reload();">返回</div>
+                                        </div>
+
+                                        <div id="duoxuan" style="display: none;">
+                                            <label>题目</label>
+                                            <div><input placeholder="题面" id="duoxuan-quetiontitle" type="text" value="" class="layui-input"></input></div>
+
+                                            <label>选项数目</label>
+                                            <div>
+                                                <select id="duoxuan-optionnum" lay-filter="duoxuan-optionnum">
+                                                    <option value="0">--</option>
+                                                    <option value="1">1</a>
+                                                    <option value="2">2</a>
+                                                    <option value="3">3</a>
+                                                    <option value="4">4</a>
+                                                    <option value="5">5</a>
+                                                </select>
+                                            </div>
+
+                                            <div id="duoxuan-fulloption">
+                                                <div id="duoxuan-optioncontent">
+                                                </div>
+                                            </div>
+                                            <div id="submitduoxuan" class="normal-btn normal-btn20" style="margin-top: 1.5%;" name="add_button_display">提交</div>
+                                            <botton id="submitduoxuan" class="normal-btn normal-btn2 normal-btn21" style="background-color:#FF5722;margin-top: 1.5%;" name="modify_button_display" onclick="document.getElementById('delete-problem').click()">删除</botton>
+                                            <div id="modify_submitduoxuan" class="normal-btn normal-btn2 normal-btn22" style="background-color:#FFB800;margin-top: 1.5%;" name="modify_button_display">修改</div>
+                                            <div id="submitduoxuan" class="normal-btn normal-btn2 normal-btn23" style="margin-top: 1.5%;" name="modify_button_display" onclick="display_add_button();location.reload();">返回</div>
+                                        </div>
+                                        </from>
+
+                                        <form class="layui-form" id="dol">
+                                            <div id="panduan" style="display: none;">
+                                                <label>题目</label>
+                                                <div><input placeholder="题面" id="panduan-quetiontitle" type="text" value="" class="layui-input"></input></div>
+
+                                                <script type="text/javascript">
+                                                    function createPanduan() {
+                                                        var par = document.getElementById("panduan-optioncontent");
+                                                        while (par.hasChildNodes()) {
+                                                            par.removeChild(par.lastChild);
+                                                        }
+                                                        var div1 = document.createElement("div");
+                                                        var input1 = document.createElement("input");
+                                                        input1.setAttribute("type", "radio");
+                                                        input1.setAttribute("name", "panduan-op");
+                                                        input1.setAttribute("checked", "true");
+                                                        input1.setAttribute("title", "T");
+                                                        var pp = document.createElement('span');
+                                                        pp.setAttribute("style", "margin-left: 2%; font-size: 20px;");
+                                                        pp.innerText = "T";
+                                                        div1.appendChild(input1);
+                                                        div1.appendChild(pp);
+                                                        par.appendChild(div1);
+
+                                                        var div2 = document.createElement("div");
+                                                        var input2 = document.createElement("input");
+                                                        input2.setAttribute("type", "radio");
+                                                        input2.setAttribute("name", "panduan-op");
+                                                        input2.setAttribute("title", "F");
+                                                        var pp = document.createElement('span');
+                                                        pp.setAttribute("style", "margin-left: 2%; font-size: 20px;");
+                                                        pp.innerText = "F";
+                                                        div2.appendChild(input2);
+                                                        div2.appendChild(pp);
+                                                        par.appendChild(div2);
+                                                    }
+                                                </script>
+                                                <div id="panduan-fulloption">
+                                                    <div id="panduan-optioncontent">
+                                                    </div>
+                                                </div>
+
+                                                <div id="submitpanduan" class="normal-btn normal-btn20" style="margin-top: 1.5%;" name="add_button_display">提交</div>
+                                                <botton id="submitpanduan" class="normal-btn normal-btn2 normal-btn21" style="background-color:#FF5722;margin-top: 1.5%;" name="modify_button_display" onclick="document.getElementById('delete-problem').click()">删除</botton>
+                                                <div id="modify_submitpanduan" class="normal-btn normal-btn2 normal-btn22" style="background-color:#FFB800;margin-top: 1.5%;" name="modify_button_display">修改</div>
+                                                <div id="submitpanduan" class="normal-btn normal-btn2 normal-btn23" style="margin-top: 1.5%;" name="modify_button_display" onclick="display_add_button();location.reload();">返回</div>
+                                            </div>
+                                            </from>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="layui-col-md6">
+                        <div class="layui-panel" style="padding: 20px 30px; height: 560px; overflow: auto;">
+                            <div id="questionlist"> </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <script type="text/javascript" src="./js/jquery-3.5.1.js"></script>
+        <script src="./layui/layui.js"></script>
+        <script>
+            layui.use('element', function () {
+                var element = layui.element;
+            });
+        </script>
+        <script type="text/javascript">
+            function ssss() {
+                var t = document.getElementsByClassName('layui-anim layui-anim-upbit');
+                t[1].setAttribute('id', 'select_type');
+            }
+
+            function sssss() {
+                var t = document.getElementsByClassName('layui-anim layui-anim-upbit');
+                t[2].setAttribute('id', 'danxuan_select_num');
+                t[4].setAttribute('id', 'duoxuan_select_num');
+                t[3].setAttribute('id', 'tiankong_select_num');
+            }
+            function ShowElement1(element) {
+                var oldhtml = element.innerText;
+                var newobj = document.createElement('input');
+                newobj.className = 'layui-input'
+                newobj.type = 'text';
+                newobj.value = oldhtml;
+                newobj.style = 'width:80%; margin-left:0.5%; margin-top:1%';
+                newobj.onblur = function ()  //为新增元素添加光标离开事件
+                {
+                    //当触发时判断新增元素值是否为空，为空则不修改，并返回原有值
+                    element.innerHTML = this.value == oldhtml ? oldhtml : this.value;
+                    //当触发时设置父节点的双击事件为ShowElement、也可在这里进行保存动作
+                    element.setAttribute("ondblclick", "ShowElement1(this);");
+                }
+                element.innerHTML = '';
+                element.appendChild(newobj);
+                newobj.setSelectionRange(0, oldhtml.length);
+                newobj.focus();
+                newobj.parentNode.setAttribute("ondblclick", "");
+            }
+            function ShowElement2(element) {
+                var oldhtml = element.innerText;
+                var newobj = document.createElement('textarea');
+                newobj.className = 'layui-textarea'
+                newobj.type = 'text';
+                newobj.value = oldhtml;
+                newobj.style = 'width:680px; min-height:5px; margin-top:1px';
+                newobj.onblur = function ()  //为新增元素添加光标离开事件
+                {
+                    //当触发时判断新增元素值是否为空，为空则不修改，并返回原有值
+                    element.innerHTML = this.value == oldhtml ? oldhtml : this.value;
+                    //当触发时设置父节点的双击事件为ShowElement、也可在这里进行保存动作
+                    element.setAttribute("ondblclick", "ShowElement2(this);");
+                }
+                element.innerHTML = '';
+                element.appendChild(newobj);
+                newobj.setSelectionRange(0, oldhtml.length);
+                newobj.focus();
+                newobj.parentNode.setAttribute("ondblclick", "");
+            }
+        </script>
+        <script type="text/javascript" src="./js/导航栏.js"></script>
+
+        <script type="text/JavaScript">
+
+            layui.use(['form'], function () {
+                form = layui.form;
+                form.on('select(addsubject)', function (data) {
+                    var val = data.value;
+                    if (val == 1) {
+                        document.getElementById('danxuan').style.display = 'block';
+                        document.getElementById('duoxuan').style.display = 'none';
+                        document.getElementById('tiankong').style.display = 'none';
+                        document.getElementById('panduan').style.display = 'none';
+                    }
+                    if (val == 2) {
+                        document.getElementById('danxuan').style.display = 'none';
+                        document.getElementById('duoxuan').style.display = 'block';
+                        document.getElementById('tiankong').style.display = 'none';
+                        document.getElementById('panduan').style.display = 'none';
+                    }
+                    if (val == 3) {
+                        document.getElementById('danxuan').style.display = 'none';
+                        document.getElementById('duoxuan').style.display = 'none';
+                        document.getElementById('tiankong').style.display = 'block';
+                        document.getElementById('panduan').style.display = 'none';
+                    }
+                    if (val == 4) {
+                        document.getElementById('danxuan').style.display = 'none';
+                        document.getElementById('duoxuan').style.display = 'none';
+                        document.getElementById('tiankong').style.display = 'none';
+                        createPanduan();
+                        document.getElementById('panduan').style.display = 'block';
+                    }
+                });
+
+
+                form.on('select(optionnum)', function (data) {
+                    var result = result = Number(data.value);
+                    var par = document.getElementById('optioncontent');
+                    while (par.hasChildNodes()) {
+                        par.removeChild(par.lastChild);
+                    }
+
+                    for (i = 1; i <= result; i++) {
+
+                        var par = document.getElementById('optioncontent');
+
+                        var tmp = document.createElement('div');
+                        var str = 'option' + i;
+                        tmp.setAttribute('id', str);
+                        var input1 = document.createElement("input");
+                        var input2 = document.createElement("input");
+
+                        input2.className = "layui-input"
+
+                        input1.setAttribute('type', 'radio');
+                        input1.setAttribute('name', "ooo");
+                        input2.setAttribute('type', 'text');
+                        input2.setAttribute('style', 'width:96%; margin-top: 1%;');
+                        var num = 64 + i;
+                        tmp.appendChild(input1);
+                        tmp.append(String.fromCharCode(num) + '.');
+                        tmp.appendChild(input2);
+
+                        par.appendChild(tmp);
+                    }
+                });
+
+                form.on('select(tiankong-optionnum)', function (data) {
+                    var result = Number(data.value);
+                    var par = document.getElementById('tiankong-optioncontent');
+                    while (par.hasChildNodes()) {
+                        par.removeChild(par.lastChild);
+                    }
+
+                    for (i = 1; i <= result; i++) {
+
+                        var par = document.getElementById('tiankong-optioncontent');
+                        var tmp = document.createElement('div');
+                        var str = 'option' + i;
+                        tmp.setAttribute('id', str);
+                        var input2 = document.createElement("input");
+
+                        input2.className = "layui-input"
+                        input2.setAttribute('type', 'text');
+                        input2.setAttribute('style', 'width:97.6%; margin-top: 1%;');
+                        tmp.append(i + '. ');
+                        tmp.appendChild(input2);
+
+                        par.appendChild(tmp);
+                    }
+                });
+                form.on('select(duoxuan-optionnum)', function (data) {
+                    var result = Number(data.value);
+                    var par = document.getElementById('duoxuan-optioncontent');
+                    while (par.hasChildNodes()) {
+                        par.removeChild(par.lastChild);
+                    }
+                    for (i = 1; i <= result; i++) {
+
+                        var par = document.getElementById('duoxuan-optioncontent');
+
+                        var tmp = document.createElement('div');
+                        var str = 'option' + i;
+                        tmp.setAttribute('id', str);
+                        var input1 = document.createElement("input");
+                        var input2 = document.createElement("input");
+
+                        input2.className = "layui-input"
+
+                        input1.setAttribute('type', 'checkbox');
+                        input1.setAttribute('name', "duoxuan-op");
+                        input2.setAttribute('type', 'text');
+                        input2.setAttribute('style', 'width:96%; margin-top: 1%;');
+                        var num = 64 + i;
+                        tmp.appendChild(input1);
+                        tmp.append(String.fromCharCode(num) + '.');
+                        tmp.appendChild(input2);
+
+                        par.appendChild(tmp);
+                    }
+                });
+            });
+
+            $('#delete-list').click(function () {
+                var idd = document.location.href.split('?')[1].split('=')[1];
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/bill/delete',
+                    type: 'POST',
+                    data: {
+                        bId: idd,
+                    },
+                    async: false,
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            alert('submit successfully')
+                            window.location.href = "./创建题单.html"
+                        } else {
+                            alert('submit fail:' + res.message);
+                        }
+                    }
+                })
+            });
+            $('#save-list').click(function () {
+                var name = document.getElementById("list-name").innerText;
+                var summary = document.getElementById("list-summary").innerText;
+                var idd = document.location.href.split('?')[1].split('=')[1];
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/bill/update',
+                    type: 'POST',
+                    data: {
+                        bId: idd,
+                        name: name,
+                        description: summary
+                    },
+                    async: false,
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            alert('submit successfully')
+                            location.reload();
+                        } else {
+                            alert('submit fail:' + res.message);
+                        }
+                    }
+                })
+            });
+
+            function test(data) {
+                alert(data);
+            }
+
+            function display_add_button() {
+                var pp = document.getElementsByName("add_button_display");
+                for (var i = 0; i < pp.length; i++) {
+                    pp[i].style.display = "inline-block";
+                }
+                var qq = document.getElementsByName("modify_button_display");
+                for (var i = 0; i < qq.length; i++) {
+                    qq[i].style.display = "none";
+                }
+
+            }
+
+            function display_modify_button() {
+                var pp = document.getElementsByName("add_button_display");
+                for (var i = 0; i < pp.length; i++) {
+                    pp[i].style.display = "none";
+                }
+                var qq = document.getElementsByName("modify_button_display");
+                for (var i = 0; i < qq.length; i++) {
+                    qq[i].style.display = "inline-block";
+                }
+
+            }
+            function change1() {
+
+                var find = document.getElementById('danxuan-quetiontitle');
+                find.id = 'modify_danxuan-quetiontitle';
+
+                var find = document.getElementById('danxuan_select_num');
+                find.setAttribute('id', 'modify_danxuan_select_num');
+
+                var find = document.getElementById('optioncontent');
+                find.setAttribute('id', 'modify_optioncontent');
+            }
+            function hh(data) {
+                display_modify_button();
+                ssss();
+                var modify_data = data.split('/?/');
+
+                var modify_type = Number(modify_data[0]);//题目类型
+
+                var pp = document.getElementById('select_type');
+                pp.childNodes[modify_type].click();
+                sssss();
+
+                if (modify_type == Number(1)) {  //单选题
+                    var modify_title = modify_data[1];//题面
+                    document.getElementById('danxuan-quetiontitle').value = modify_title;
+
+                    var modify_question = modify_data[2];
+                    var data_modify_question = modify_question.split('/;/');
+                    var num_modify_question = data_modify_question.length; //选项数量
+                    var pp = document.getElementById('danxuan_select_num');
+                    console.log(pp);
+                    console.log(Number(num_modify_question) - Number(1));
+                    pp.childNodes[Number(num_modify_question)].click();
+
+                    var par_modify_question = document.getElementById('optioncontent').childNodes;
+                    for (var i = 0; i < num_modify_question; i++) {
+                        var tmp_modify_question = data_modify_question[i].split('/:/')[1];  //每个具体的选项
+                        par_modify_question[Number(i)].childNodes[2].value = tmp_modify_question;
+                    }
+
+                    var modify_answer = modify_data[3][0].charCodeAt() - 65;
+
+                    par_modify_question[modify_answer].childNodes[0].checked = true;
+                }
+
+                if (modify_type == Number(2)) {  //多选题
+                    var modify_title = modify_data[1];//题面
+                    document.getElementById('duoxuan-quetiontitle').value = modify_title;
+
+                    var modify_question = modify_data[2];
+                    var data_modify_question = modify_question.split('/;/');
+                    var num_modify_question = data_modify_question.length; //选项数量
+                    var par_modify_question = document.getElementById('duoxuan-optioncontent').childNodes;
+
+                    var pp = document.getElementById('duoxuan_select_num');
+                    console.log(pp);
+                    console.log(Number(num_modify_question));
+                    pp.childNodes[Number(num_modify_question)].click();
+
+
+                    for (var i = 0; i < num_modify_question; i++) {
+                        var tmp_modify_question = data_modify_question[i].split('/:/')[1];  //每个具体的选项
+                        par_modify_question[Number(i)].childNodes[2].value = tmp_modify_question;
+                    }
+
+                    var modify_answer = modify_data[3];
+                    var data_modify_answer = modify_answer.split('/;/');
+                    var num_modify_answer = data_modify_answer.length;
+                    for (var i = 0; i < num_modify_answer; i++) {
+                        var tmp_modify_answer = data_modify_answer[i].split('/:/')[0].charCodeAt() - 65;  //每个答案
+                        par_modify_question[tmp_modify_answer].childNodes[0].checked = true;
+                    }
+                }
+
+                if (modify_type == Number(3)) {  //填空题
+                    var modify_title = modify_data[1];//题面
+                    document.getElementById('tiankong-quetiontitle').value = modify_title;
+
+                    var modify_question = modify_data[2];
+                    var data_modify_question = modify_question.split('/;/');
+                    var num_modify_question = data_modify_question.length; //选项数量
+                    var par_modify_question = document.getElementById('tiankong-optioncontent').childNodes;
+
+                    var pp = document.getElementById('tiankong_select_num');
+                    console.log(pp);
+                    console.log(Number(num_modify_question));
+                    pp.childNodes[Number(num_modify_question)].click();
+
+                    var modify_answer = modify_data[3];
+                    var data_modify_answer = modify_answer.split('/;/');
+                    var num_modify_answer = data_modify_answer.length;
+                    for (var i = 0; i < num_modify_answer; i++) {
+                        var tmp_modify_answer = data_modify_answer[i].split('/:/')[1];//每个答案
+                        console.log[tmp_modify_answer];
+                        par_modify_question[i].childNodes[1].value = tmp_modify_answer;
+                    }
+                }
+
+                if (modify_type == Number(4)) {  //判断题
+                    var modify_title = modify_data[1];//题面
+                    document.getElementById('panduan-quetiontitle').value = modify_title;
+
+                    var modify_answer = data[data.length - 1];
+                    var par_modify_question = document.getElementById('panduan-optioncontent').childNodes;
+                    if (modify_answer == 'T') {
+                        par_modify_question[3].childNodes[0].checked = true;
+                    }
+                    else {
+                        par_modify_question[1].childNodes[0].checked = true;
+                    }
+                }
+
+                function submit() {
+                    delete (id);
+                    submit(id);
+                }
+
+            }
+
+
+            window.onload = function () {
+                $('#profile-account').val(sessionStorage.getItem('account'));
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/bill/getWithSubjects',
+                    type: 'GET',
+                    data: {
+                        bId: document.location.href.split('?')[1].split('=')[1]
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            console.log(res.data)
+                            var tmp = res.data;
+                            document.getElementById("list-name").innerText = tmp.name;
+                            document.getElementById("list-summary").innerText = tmp.description;
+                        }
+                        else {
+                            alert(res.message)
+                            window.location.href = "./index.html"
+                        }
+                    }
+                })
+
+                var len = "";
+                $('#profile-account').val(sessionStorage.getItem('account'));
+
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/bill/getWithSubjects',
+                    type: 'GET',
+                    data: {
+                        bId: document.location.href.split('?')[1].split('=')[1]
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    success: function (res) {
+                        console.log(res);
+                        if (res.code == 200) {
+                            console.log(res.data)
+                            var tmp = res.data;
+                            len = tmp.subjects.length;
+
+                            var tmpbr = document.createElement('br');
+                            var par = document.getElementById('questionlist');
+                            for (var i = 0; i < len; i++) {
+                                var question = document.createElement('div');
+                                question.setAttribute('class', 'question');
+                                question.setAttribute('id', i + 1);
+                                par.appendChild(question);
+
+
+                                var str = "";
+                                var tmpdata = tmp.subjects[i];
+                                var tmpinput = document.createElement('input');
+
+                                question.setAttribute('value', tmpdata.type + '/?/' + tmpdata.title + '/?/' + tmpdata.question + '/?/' + tmpdata.answer);
+
+                                tmpinput.setAttribute('type', 'radio');
+                                tmpinput.setAttribute('name', 'delete-id');
+                                tmpinput.setAttribute('value', tmpdata.id);
+                                question.appendChild(tmpinput);
+
+                                var sss = tmpdata.type + '/?/' + tmpdata.title + '/?/' + tmpdata.question + '/?/' + tmpdata.answer;
+
+                                tmpinput.onclick = function (val) {
+                                    return function () { hh(val); }
+                                }(sss)
+
+                                switch (tmpdata.type) {
+                                    case 1: str = "单选题"; break;
+                                    case 2: str = "多选题"; break;
+                                    case 3: str = "填空题"; break;
+                                    case 4: str = "判断题"; break;
+                                }
+
+                                var tmpadd = document.createElement('span');
+                                tmpadd.innerText = str + ' ';
+                                tmpadd.setAttribute('class', 'questionhint');
+                                tmpadd.setAttribute('data-type', tmpdata.type);
+                                question.appendChild(tmpadd);
+                                question.appendChild(tmpbr);
+                                var tmpqt = document.createElement('span');
+                                tmpqt.innerText = tmpdata.title;
+                                tmpqt.setAttribute('class', 'questionself');
+                                question.appendChild(tmpqt);
+
+                                var tmpbr = document.createElement('br');
+                                question.appendChild(tmpbr);
+
+                                str = "";
+                                var answer = document.createElement('div');
+                                var option = document.createElement('div');
+                                option.setAttribute('class', 'key');
+                                if (tmpdata.type != 3 && tmpdata.type != 4) {
+                                    var tmpstr = tmpdata.question;
+                                    var qaqstr = "";
+                                    for (var j = 0; j < tmpstr.length; j++) {
+                                        if (tmpstr[j + 1] == '/' && tmpstr[j + 2] == ':' && tmpstr[j + 3] == '/') {
+                                            qaqstr = tmpstr[j] + ". ";
+                                            j += 3;
+                                        }
+                                        else if (tmpstr[j] == '/' && tmpstr[j + 1] == ';' && tmpstr[j + 2] == '/') {
+                                            option = document.createElement('div');
+                                            option.setAttribute('class', 'key');
+                                            var nmp = document.createElement('input');
+
+                                            if (tmpdata.type == 2) nmp.setAttribute('type', 'checkbox');
+                                            else nmp.setAttribute('type', 'radio');
+                                            nmp.onclick = function () { return false; };
+                                            nmp.setAttribute('class', 'check');
+                                            nmp.setAttribute('id', question.id + qaqstr[0]);
+                                            option.appendChild(nmp);
+                                            var tmpadd1 = document.createElement('span');
+                                            tmpadd1.innerText = qaqstr;
+                                            tmpadd1.setAttribute('class', 'answerself');
+                                            option.appendChild(tmpadd1);
+                                            question.appendChild(option);
+                                            qaqstr = "";
+                                            j += 2;
+                                        }
+                                        else qaqstr += tmpstr[j];
+
+                                    }
+                                    option = document.createElement('div');
+                                    option.setAttribute('class', 'key');
+                                    var nmp = document.createElement('input');
+                                    if (tmpdata.type == 2) nmp.setAttribute('type', 'checkbox');
+                                    else nmp.setAttribute('type', 'radio');
+                                    nmp.onclick = function () { return false; };
+                                    nmp.setAttribute('class', 'check');
+                                    nmp.setAttribute('id', question.id + qaqstr[0]);
+                                    option.appendChild(nmp);
+                                    var tmpadd1 = document.createElement('span');
+                                    tmpadd1.innerText = qaqstr;
+                                    tmpadd1.setAttribute('class', 'answerself');
+                                    option.appendChild(tmpadd1);
+                                    question.appendChild(option);
+                                }
+                                if (tmpdata.type == 1 || tmpdata.type == 2) {
+                                    var tmpstr = tmpdata.answer;
+                                    for (var j = 0; j < tmpstr.length; j++) {
+                                        if (tmpstr[j + 1] == '/' && tmpstr[j + 2] == ':' && tmpstr[j + 3] == '/') {
+                                            if (tmpdata.type != 3) {
+                                                var nmp = document.getElementById(question.id + tmpstr[j]);
+                                                nmp.checked = true;
+                                            }
+                                            j += 3;
+                                        }
+                                    }
+                                }
+                                else if (tmpdata.type == 3) {
+                                    var tmpdaan = document.createElement('span');
+                                    tmpdaan.innerHTML = "[答案] "
+                                    tmpdaan.setAttribute('class', 'answerhint');
+                                    tmpdaan.setAttribute('style', 'color:#1E9FFF;');
+                                    answer.appendChild(tmpdaan);
+
+                                    var tmpstr = tmpdata.answer;
+                                    var qaqstr = "";
+                                    for (var j = 0; j < tmpstr.length; j++) {
+                                        if (tmpstr[j + 1] == '/' && tmpstr[j + 2] == ':' && tmpstr[j + 3] == '/') {
+                                            qaqstr = tmpstr[j] + "、";
+                                            j += 3;
+                                        }
+                                        else if (tmpstr[j] == '/' && tmpstr[j + 1] == ';' && tmpstr[j + 2] == '/') {
+                                            var tmpadd2 = document.createElement('span');
+                                            tmpadd2.innerHTML = qaqstr + "&nbsp&nbsp&nbsp";
+                                            tmpadd2.setAttribute('class', 'answerself');
+                                            answer.appendChild(tmpadd2);
+
+                                            qaqstr = "";
+                                            j += 2;
+                                        }
+                                        else {
+                                            qaqstr += tmpstr[j];
+                                        }
+                                    }
+                                    var tmpadd2 = document.createElement('span');
+                                    tmpadd2.innerText = qaqstr;
+                                    tmpadd2.setAttribute('class', 'answerself');
+                                    answer.appendChild(tmpadd2);
+
+                                    var tmpbr = document.createElement('br');
+                                    answer.appendChild(tmpbr);
+                                }
+                                else {
+                                    var tmpdaan = document.createElement('span');
+                                    tmpdaan.innerHTML = "[答案]"
+                                    tmpdaan.setAttribute('class', 'answerhint');
+                                    tmpdaan.setAttribute('style', 'color:#1E9FFF;');
+                                    answer.appendChild(tmpdaan);
+
+                                    if (tmpdata.answer[0] == 'T') {
+                                        var tmpdaan = document.createElement('span');
+                                        tmpdaan.innerText = "  T"
+                                        tmpdaan.setAttribute('class', 'answerself');
+                                        answer.appendChild(tmpdaan);
+                                    }
+                                    else {
+                                        var tmpdaan = document.createElement('span');
+                                        tmpdaan.innerText = "  F"
+                                        tmpdaan.setAttribute('class', 'answerself');
+                                        answer.appendChild(tmpdaan);
+                                    }
+                                }
+                                question.appendChild(answer);
+                                if (i != len - 1) {
+                                    var nmp = document.createElement('hr');
+                                    par.appendChild(nmp);
+                                }
+                            }
+                            document.getElementById("list-name").innerText = tmp.name;
+                            document.getElementById("list-summary").innerText = tmp.description;
+                        }
+                        else { alert(res.message); }
+                    }
+
+                })
+                display_add_button();
+            }
+
+
+            $('#delete-problem').click(function () {
+                var idd = document.location.href.split('?')[1].split('=')[1];
+                var tmpradio = document.getElementsByName('delete-id');
+                var tmpvalue = "";
+                for (var i = 0; i < tmpradio.length; i++) {
+                    if (tmpradio[i].checked == true) {
+                        tmpvalue = tmpradio[i].value;
+                        break;
+                    }
+                }
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/subject/delete',
+                    type: 'GET',
+                    data: {
+                        bId: idd,
+                        sId: tmpvalue,
+                    },
+                    async: false,
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            alert('submit successfully')
+                            location.reload();
+                        } else {
+                            alert('submit fail:' + res.message);
+                        }
+                    }
+                })
+            });
+            $('#submitdanxuan').click(function () {
+                var title = $('#danxuan-quetiontitle').val();
+                if (title == "") { alert('请输入题目'); return; }
+
+                var question = "";
+                var par = document.getElementById('optioncontent');
+                var getChild = document.getElementById('optioncontent').childNodes;
+                for (var i = 0; i < getChild.length; i++) {
+                    question = question + String.fromCharCode(i + 65) + '/:/';
+                    var tmp = getChild[i];
+                    var cc = tmp.childNodes;
+                    question = question + cc[2].value;
+                    if (i != getChild.length - 1) question = question + '/;/';
+                }
+
+                var vv = "gg"; var answer = "";
+                var radio = document.getElementsByName("ooo");
+                for (var i = 0; i < radio.length; i++) {
+                    if (radio[i].checked == true) {
+                        vv = i;
+                        break;
+                    }
+                }
+                if (vv == "gg") { alert('请给出答案'); return; }
+                answer = String.fromCharCode(vv + 65) + '/:/';
+                answer = answer + (getChild[vv].childNodes[2].value);
+
+                var idd = document.location.href.split('?')[1].split('=')[1];
+
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/subject/add',
+                    type: 'POST',
+                    data: {
+                        bId: idd,
+                        title: title,
+                        question: question,
+                        answer: answer,
+                        type: '1',
+                    },
+                    async: false,
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            alert('submit successfully')
+                            //alert(res.data)
+                            //
+                            location.reload();
+                        } else {
+                            alert('submit fail:' + res.message);
+                        }
+                    }
+                })
+            })
+            $('#submittiankong').click(function () {
+                var title = $('#tiankong-quetiontitle').val();
+                if (title == "") { alert('请输入题目'); return; }
+
+                var chnum = ["一", "二", "三", "四", "五", "六", "七"];
+                var num = document.getElementById('tiankong-optionnum').value;
+                var question = "";
+                for (var i = 0; i < num; i++) {
+                    if (i != 0) question += '/;/';
+                    question += chnum[i];
+                }
+
+                var answer = "";
+                var alertinfo = "";
+                var par = document.getElementById('tiankong-optioncontent');
+                var getChild = document.getElementById('tiankong-optioncontent').childNodes;
+                for (var i = 0; i < getChild.length; i++) {
+
+                    answer += chnum[i] + '/:/';
+                    var tmp = getChild[i];
+                    var cc = tmp.childNodes;
+                    answer += cc[1].value;
+                    if (cc[1].value == "") alertinfo += (1 + i) + '、';
+                    if (i != getChild.length - 1) answer = answer + '/;/';
+                }
+                if (alertinfo != "") {
+                    alertinfo = alertinfo.substr(0, alertinfo.length - 1);
+                    alert('请填写' + alertinfo + '条');
+                    return;
+                }
+
+                var idd = document.location.href.split('?')[1].split('=')[1];
+
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/subject/add',
+                    type: 'POST',
+                    data: {
+                        bId: idd,
+                        title: title,
+                        question: question,
+                        answer: answer,
+                        type: '3',
+                    },
+
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            alert('submit successfully');
+                            //alert(res.data);
+
+                            location.reload();
+                        } else {
+                            alert('submit fail:' + res.message);
+                        }
+                    }
+                })
+            })
+
+            $('#submitpanduan').click(function () {
+                var title = $('#panduan-quetiontitle').val();
+                if (title == "") { alert('请输入题目'); return; }
+
+                var question = "T/;/F";
+                var answer = "";
+                var radio = document.getElementsByName("panduan-op");
+
+                if (radio[0].checked == true) answer = "T/:/T";
+                else answer = "F/:/F";
+
+                var idd = document.location.href.split('?')[1].split('=')[1];
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/subject/add',
+                    type: 'POST',
+                    data: {
+                        bId: idd,
+                        title: title,
+                        question: question,
+                        answer: answer,
+                        type: '4',
+                    },
+
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            location.reload();
+                        }
+                        else alert('submit fail:' + res.message);
+                    }
+                })
+            })
+            $('#submitduoxuan').click(function () {
+                var title = $('#duoxuan-quetiontitle').val();
+                if (title == "") { alert('请输入题目'); return; }
+
+                var question = "";
+                var par = document.getElementById('duoxuan-optioncontent');
+                var getChild = document.getElementById('duoxuan-optioncontent').childNodes;
+                for (var i = 0; i < getChild.length; i++) {
+                    if (i != 0) question = question + '/;/';
+                    question = question + String.fromCharCode(i + 65) + '/:/';
+                    var tmp = getChild[i];
+                    var cc = tmp.childNodes;
+                    question = question + cc[2].value;
+                }
+                var answer = "";
+                var radio = document.getElementsByName("duoxuan-op");
+                var check = 0;
+                for (var i = 0; i < radio.length; i++) {
+                    if (radio[i].checked == true) {
+                        if (check == 0) check = 1;
+                        else answer = answer + '/;/';
+                        answer += String.fromCharCode(i + 65) + '/:/' + (getChild[i].childNodes[2].value);
+                    }
+                }
+                var idd = document.location.href.split('?')[1].split('=')[1];
+                if (answer == "") {
+                    alert('请给出答案');
+                    return;
+                }
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/subject/add',
+                    type: 'POST',
+                    data: {
+                        bId: idd,
+                        title: title,
+                        question: question,
+                        answer: answer,
+                        type: '2',
+                    },
+
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            alert('submit successfully')
+                            location.reload();
+                        }
+                        else alert('submit fail:' + res.message);
+                    }
+                })
+            })
+
+            $('#modify_submitdanxuan').click(function () {
+                var idd = document.location.href.split('?')[1].split('=')[1];
+                var tmpradio = document.getElementsByName('delete-id');
+                var tmpvalue = "";
+                for (var i = 0; i < tmpradio.length; i++) {
+                    if (tmpradio[i].checked == true) {
+                        tmpvalue = tmpradio[i].value;
+                        break;
+                    }
+                }
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/subject/delete',
+                    type: 'GET',
+                    data: {
+                        bId: idd,
+                        sId: tmpvalue,
+                    },
+                    async: false,
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            //alert('submit successfully')
+                        } else {
+                            alert('submit fail:' + res.message);
+                        }
+                    }
+                })
+                document.getElementById('submitdanxuan').click();
+            })
+
+            $('#modify_submittiankong').click(function () {
+                var idd = document.location.href.split('?')[1].split('=')[1];
+                var tmpradio = document.getElementsByName('delete-id');
+                var tmpvalue = "";
+                for (var i = 0; i < tmpradio.length; i++) {
+                    if (tmpradio[i].checked == true) {
+                        tmpvalue = tmpradio[i].value;
+                        break;
+                    }
+                }
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/subject/delete',
+                    type: 'GET',
+                    data: {
+                        bId: idd,
+                        sId: tmpvalue,
+                    },
+                    async: false,
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            //alert('submit successfully')
+                        } else {
+                            alert('submit fail:' + res.message);
+                        }
+                    }
+                })
+
+
+                document.getElementById('submittiankong').click();
+            })
+
+            $('#modify_submitpanduan').click(function () {
+                var idd = document.location.href.split('?')[1].split('=')[1];
+                var tmpradio = document.getElementsByName('delete-id');
+                var tmpvalue = "";
+                for (var i = 0; i < tmpradio.length; i++) {
+                    if (tmpradio[i].checked == true) {
+                        tmpvalue = tmpradio[i].value;
+                        break;
+                    }
+                }
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/subject/delete',
+                    type: 'GET',
+                    data: {
+                        bId: idd,
+                        sId: tmpvalue,
+                    },
+                    async: false,
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            //alert('submit successfully')
+                        } else {
+                            alert('submit fail:' + res.message);
+                        }
+                    }
+                })
+                document.getElementById('submitpanduan').click();
+            })
+
+            $('#modify_submitduoxuan').click(function () {
+                var idd = document.location.href.split('?')[1].split('=')[1];
+                var tmpradio = document.getElementsByName('delete-id');
+                var tmpvalue = "";
+                for (var i = 0; i < tmpradio.length; i++) {
+                    if (tmpradio[i].checked == true) {
+                        tmpvalue = tmpradio[i].value;
+                        break;
+                    }
+                }
+                $.ajax({
+                    url: 'http://60.205.211.19:1024/subject/delete',
+                    type: 'GET',
+                    data: {
+                        bId: idd,
+                        sId: tmpvalue,
+                    },
+                    async: false,
+                    headers: {
+                        Authorization: sessionStorage.getItem('token')
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            //alert('submit successfully')
+                        } else {
+                            alert('submit fail:' + res.message);
+                        }
+                    }
+                })
+                document.getElementById('submitduoxuan').click();
+
+            })
+        </script>
+
+</body>
+</html>
